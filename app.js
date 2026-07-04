@@ -19,9 +19,56 @@ function normalize(raw, kind){
   return n;
 }
 
-const fa = n => Math.round(n).toLocaleString("fa-IR");
-const fa10k = n => (Math.round(n / 10000) * 10000).toLocaleString("fa-IR"); // نتایج تومانی: گرد به ده‌هزار تومان
-const fa1d = n => (Math.round(n * 10) / 10).toLocaleString("fa-IR", { maximumFractionDigits: 1 }); // اعداد دلاری: حداکثر یک رقم اعشار
+/* ── زبان و نسخه ── */
+const APP_VERSION = "0.9"; // نسخه‌های زیر ۱ برچسب Beta می‌گیرند
+let lang = localStorage.getItem("hobab-lang") || "fa";
+const T = {
+  fa: {
+    name: "حباب", subtitle: "اعلام ارزش ذاتی طلا و نقره",
+    tabGold: "طلا", tabSilver: "نقره",
+    onsLabel: "انس جهانی طلا (دلار)", usdLabel: "قیمت دلار بازار آزاد (تومان)",
+    xagLabel: "انس جهانی نقره (دلار)",
+    rowMesghal: "ارزش ذاتی مثقال", rowGeram: "ارزش ذاتی گرم ۱۸ عیار",
+    silverRow: "ارزش ذاتی شمش یک‌کیلویی ۹۹۹",
+    share: "اشتراک نتیجه",
+    shareText: (m, g) => "ارزش ذاتی طلا — مثقال: " + m + " تومان، گرم ۱۸ عیار: " + g + " تومان",
+    toman: " تومان", dollar: " دلار", read: "خوانده شد: ",
+    waiting: "در انتظار دریافت داده…",
+    marketOpen: "بازارهای جهانی بازند", marketClosed: "بازارهای جهانی بسته‌اند",
+    lastUpdate: "آخرین به‌روزرسانی — ", goldWord: "طلا", silverWord: "نقره",
+    fetching: "در حال دریافت خودکار…",
+    failed: "دریافت ناموفق: ", autoFailedHint: " — دکمهٔ کنار فیلد را بزن",
+    source: "منبع: gold-api", atHour: " — ساعت ", closedTag: " — بازارهای جهانی بسته‌اند",
+    saved: " (ذخیره‌شده)", manual: "آخرین نرخ دستی شما",
+    required: "این مقدار لازم است",
+    locale: "fa-IR", dir: "rtl"
+  },
+  en: {
+    name: "Hobab", subtitle: "Intrinsic value of gold & silver",
+    tabGold: "Gold", tabSilver: "Silver",
+    onsLabel: "Gold ounce (USD)", usdLabel: "Free-market USD rate (Toman)",
+    xagLabel: "Silver ounce (USD)",
+    rowMesghal: "Intrinsic value per mesghal", rowGeram: "Intrinsic value per 18k gram",
+    silverRow: "Intrinsic value of 1 kg .999 bar",
+    share: "Share result",
+    shareText: (m, g) => "Gold intrinsic value — mesghal: " + m + " Toman, 18k gram: " + g + " Toman",
+    toman: " Toman", dollar: " USD", read: "Parsed: ",
+    waiting: "Waiting for data…",
+    marketOpen: "Global markets are open", marketClosed: "Global markets are closed",
+    lastUpdate: "Last update — ", goldWord: "Gold", silverWord: "Silver",
+    fetching: "Fetching automatically…",
+    failed: "Fetch failed: ", autoFailedHint: " — use the sync button",
+    source: "Source: gold-api", atHour: " — at ", closedTag: " — global markets closed",
+    saved: " (saved)", manual: "Your last manual rate",
+    required: "This value is required",
+    locale: "en-US", dir: "ltr"
+  }
+};
+const t = k => T[lang][k];
+
+const fa = n => Math.round(n).toLocaleString(t("locale"));
+const fa10k = n => (Math.round(n / 10000) * 10000).toLocaleString(t("locale")); // نتایج تومانی: گرد به ده‌هزار
+const fa1d = n => (Math.round(n * 10) / 10).toLocaleString(t("locale"), { maximumFractionDigits: 1 }); // دلاری: یک رقم اعشار
 
 /* ── فرمول ── */
 const MESGHAL_DIVISOR = 9.5742;   // انس×دلار ÷ این عدد = ذاتی مثقال
@@ -39,18 +86,16 @@ function marketClosedNow(){
 async function fetchPrice(symbol){ // "XAU" طلا ، "XAG" نقره
   const res = await fetch("https://api.gold-api.com/price/" + symbol,
     { signal: AbortSignal.timeout(10000) }); // حداکثر ۱۰ ثانیه انتظار، بعد خطا
-  if(!res.ok) throw new Error("خطای " + res.status);
+  if(!res.ok) throw new Error("HTTP " + res.status);
   const data = await res.json();
-  const t = data.updatedAt
-    ? new Date(data.updatedAt).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }) : "";
+  const tm = data.updatedAt
+    ? new Date(data.updatedAt).toLocaleTimeString(t("locale"), { hour: "2-digit", minute: "2-digit" }) : "";
   // بسته بودن بازار: تقویم آخر هفته (قطعی) یا کهنگی دادهٔ منبع (پشتیبان)
   const stale = data.updatedAt && (Date.now() - new Date(data.updatedAt).getTime() > 45 * 60 * 1000);
   const closed = marketClosedNow() || stale;
-  marketState[symbol] = { closed: !!closed, t };
+  marketState[symbol] = { closed: !!closed, t: tm };
   updateMarketCard();
-  if(symbol === "XAU") addTrendSample(data.price); // نمونه برای نمودار روند
-  return { price: Math.round(data.price * 10) / 10,
-           info: "منبع: gold-api" + (t ? " — ساعت " + t : "") + (closed ? " — بازارهای جهانی بسته‌اند" : "") };
+  return { price: Math.round(data.price * 10) / 10, tm: tm, closed: !!closed };
 }
 
 /* ── DOM ── */
@@ -76,10 +121,10 @@ if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch
 /* ── نمایش زندهٔ مقدار خوانده‌شده + محاسبهٔ زنده ── */
 $("usd").addEventListener("input", e => {
   const n = normalize(e.target.value, "usd");
-  e.target.supportingText = n ? "خوانده شد: " + fa(n) + " تومان" : " ";
+  e.target.supportingText = n ? t("read") + fa(n) + t("toman") : " ";
   e.target.error = false;
   if(n){ // آخرین نرخ دستی را برای دفعهٔ بعد نگه دار
-    store.usd = { price: n, info: "آخرین نرخ دستی شما" };
+    store.usd = { price: n, manual: true };
     try{ localStorage.setItem("hobabsanj-rates", JSON.stringify(store)); }catch(err){}
   }
   calc();
@@ -91,7 +136,7 @@ $("ons").addEventListener("input", e => { e.target.error = false; calc(); });
   $(id).addEventListener("blur", e => {
     const empty = !String(e.target.value).trim();
     e.target.error = empty;
-    e.target.errorText = empty ? "این مقدار لازم است" : "";
+    e.target.errorText = empty ? t("required") : "";
   });
 });
 
@@ -106,23 +151,25 @@ function calc(){
   const geram = mesghal / GRAM_PER_MESGHAL;
   last = { mesghal, geram };
   $("out").style.display = "block";
-  $("zatiMesghal").textContent = fa10k(mesghal) + " تومان";
-  $("zatiGeram").textContent = fa10k(geram) + " تومان";
+  $("zatiMesghal").textContent = fa10k(mesghal) + t("toman");
+  $("zatiGeram").textContent = fa10k(geram) + t("toman");
 }
 /* ── اشتراک نتیجه ── */
 $("share").addEventListener("click", () => {
   if(!last) return;
-  const text = "ارزش ذاتی طلا — مثقال: " + fa10k(last.mesghal) + " تومان، گرم ۱۸ عیار: " + fa10k(last.geram) + " تومان";
+  const text = T[lang].shareText(fa10k(last.mesghal), fa10k(last.geram));
   if(navigator.share) navigator.share({ text: text, url: location.href }).catch(() => {});
   else navigator.clipboard.writeText(text + " — " + location.href);
 });
 
 /* ── قرار دادن نرخ در فیلد + ذخیره برای دفعهٔ بعد و حالت آفلاین ── */
 const store = JSON.parse(localStorage.getItem("hobabsanj-rates") || "{}");
+const infoText = r => r.manual ? t("manual")
+  : t("source") + (r.tm ? t("atHour") + r.tm : "") + (r.closed ? t("closedTag") : "");
 function applyRate(fieldId, r, after){
   $(fieldId).value = r.price;
   $(fieldId).error = false;
-  $(fieldId).supportingText = r.info;
+  $(fieldId).supportingText = infoText(r);
   store[fieldId] = r;
   try{ localStorage.setItem("hobabsanj-rates", JSON.stringify(store)); }catch(e){}
   after();
@@ -138,7 +185,7 @@ function wireFetch(btnId, fieldId, fetcher, after){
       icon.textContent = "sync";
     }catch(err){
       icon.textContent = "sync_problem";
-      $(fieldId).supportingText = "دریافت ناموفق: " + err.message;
+      $(fieldId).supportingText = t("failed") + err.message;
     }
   });
 }
@@ -151,7 +198,7 @@ function silver(){
   if(!x){ $("silverOut").style.display = "none"; return; }
   const v = x * (1000 / 31.1035) * 0.999; // ۱۰۰۰ گرم ÷ گرم‌به‌انس × خلوص ۹۹۹
   $("silverOut").style.display = "flex";
-  $("silverVal").textContent = fa1d(v) + " دلار";
+  $("silverVal").textContent = fa1d(v) + t("dollar");
 }
 $("xag").addEventListener("input", silver);
 
@@ -162,54 +209,11 @@ function updateMarketCard(){
   const closed = (xau && xau.closed) || (xag && xag.closed);
   $("marketCard").className = "market " + (closed ? "closed" : "open");
   $("marketIcon").textContent = closed ? "bedtime" : "radio_button_checked";
-  $("marketLabel").textContent = closed ? "بازارهای جهانی بسته‌اند" : "بازارهای جهانی بازند";
+  $("marketLabel").textContent = closed ? t("marketClosed") : t("marketOpen");
   const parts = [];
-  if(xau) parts.push("طلا: " + (xau.t || "—"));
-  if(xag) parts.push("نقره: " + (xag.t || "—"));
-  $("marketTimes").textContent = "آخرین به‌روزرسانی — " + parts.join(" · ");
-}
-
-/* ── روند انس طلا — نمونه‌گیری روی همین دستگاه، بدون وابستگی جدید ── */
-const TREND_KEY = "hobab-trend";
-function addTrendSample(p){
-  let arr = [];
-  try{ arr = JSON.parse(localStorage.getItem(TREND_KEY) || "[]"); }catch(e){}
-  const lastS = arr[arr.length - 1];
-  if(!lastS || Date.now() - lastS.t > 10 * 60 * 1000){ // حداکثر یک نمونه در ۱۰ دقیقه
-    arr.push({ t: Date.now(), p: p });
-    if(arr.length > 60) arr = arr.slice(-60); // فقط ۶۰ نمونهٔ آخر
-    try{ localStorage.setItem(TREND_KEY, JSON.stringify(arr)); }catch(e){}
-  }
-  drawTrend(arr);
-}
-
-function drawTrend(arr){
-  if(!arr){
-    try{ arr = JSON.parse(localStorage.getItem(TREND_KEY) || "[]"); }catch(e){ arr = []; }
-  }
-  if(arr.length === 0){ $("trend").style.display = "none"; return; }
-  if(arr.length < 2){ // با یک نقطه هنوز خطی نیست؛ ولی وضعیت را نشان بده
-    $("trend").style.display = "block";
-    $("spark").style.display = "none";
-    $("trendDelta").textContent = "";
-    $("trendLabel").textContent = "نمونهٔ اول انس ثبت شد — نمودار از بازدیدهای بعدی شکل می‌گیرد";
-    return;
-  }
-  $("trendLabel").textContent = "روند انس طلا (نمونه‌های این دستگاه)";
-  $("spark").style.display = "block";
-  const ps = arr.map(s => s.p);
-  const min = Math.min.apply(null, ps), max = Math.max.apply(null, ps);
-  const span = (max - min) || 1;
-  const pts = ps.map((p, i) =>
-    (i * (300 / (ps.length - 1))).toFixed(1) + "," + (55 - (p - min) / span * 50).toFixed(1)
-  ).join(" ");
-  $("spark").innerHTML =
-    '<polygon class="area" points="0,60 ' + pts + ' 300,60"/><polyline points="' + pts + '"/>';
-  const delta = ps[ps.length - 1] - ps[0];
-  $("trendDelta").textContent = (delta >= 0 ? "▲ " : "▼ ") +
-    Math.abs(delta / ps[0] * 100).toLocaleString("fa-IR", { maximumFractionDigits: 2 }) + "٪";
-  $("trendDelta").style.color = delta >= 0 ? "var(--ok-fg)" : "#C62828";
-  $("trend").style.display = "block";
+  if(xau) parts.push(t("goldWord") + ": " + (xau.t || "—"));
+  if(xag) parts.push(t("silverWord") + ": " + (xag.t || "—"));
+  $("marketTimes").textContent = t("lastUpdate") + parts.join(" · ");
 }
 
 /* ── منوی دوگانهٔ طلا / نقره — با کلیک مستقیم، مستقل از رویداد داخلی کامپوننت ── */
@@ -221,13 +225,50 @@ document.querySelectorAll("#nav md-primary-tab").forEach((tab, k) => {
   });
 });
 
-/* ── باز شدن صفحه: اول آخرین نرخ‌های ذخیره‌شده، بعد دریافت خودکار نرخ تازه ── */
+/* ── زبان: اعمال همهٔ برچسب‌ها + دکمهٔ سوییچ فا/EN ── */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = t("dir");
+  document.title = t("name") + " | " + t("subtitle");
+  $("appName").textContent = t("name");
+  $("verBadge").textContent = "v" + APP_VERSION + (parseFloat(APP_VERSION) < 1 ? " Beta" : "");
+  $("subtitle").textContent = t("subtitle");
+  $("tabGoldLabel").textContent = t("tabGold");
+  $("tabSilverLabel").textContent = t("tabSilver");
+  $("ons").label = t("onsLabel");
+  $("usd").label = t("usdLabel");
+  $("xag").label = t("xagLabel");
+  $("rowMesghalLabel").textContent = t("rowMesghal");
+  $("rowGeramLabel").textContent = t("rowGeram");
+  $("silverRowLabel").textContent = t("silverRow");
+  $("shareLabel").textContent = t("share");
+  if(!marketState.XAU && !marketState.XAG) $("marketLabel").textContent = t("waiting");
+  updateMarketCard();
+  ["ons", "usd", "xag"].forEach(id => { if(store[id] && $(id).value) $(id).supportingText = infoText(store[id]); });
+  calc(); silver();
+}
+$("langBtn").addEventListener("click", () => {
+  lang = lang === "fa" ? "en" : "fa";
+  localStorage.setItem("hobab-lang", lang);
+  applyLang();
+});
+
+/* ── باز شدن صفحه: زبان و برچسب‌ها، آخرین نرخ‌های ذخیره‌شده، بعد دریافت خودکار ── */
 ["ons", "usd", "xag"].forEach(id => {
   if(store[id]){
     $(id).value = store[id].price;
-    $(id).supportingText = store[id].info + " (ذخیره‌شده)";
+    $(id).supportingText = infoText(store[id]) + t("saved");
   }
 });
-calc(); silver(); drawTrend();
-fetchPrice("XAU").then(r => applyRate("ons", r, calc)).catch(() => {});
-fetchPrice("XAG").then(r => applyRate("xag", r, silver)).catch(() => {});
+applyLang();
+try{ localStorage.removeItem("hobab-trend"); }catch(e){} // پاک‌سازی دادهٔ نمودار حذف‌شده
+
+/* دریافت خودکار انس طلا و نقره در باز شدن صفحه — بدون نیاز به دکمه */
+[["ons", "XAU", calc], ["xag", "XAG", silver]].forEach(([fieldId, symbol, after]) => {
+  if(!$(fieldId).value) $(fieldId).supportingText = t("fetching");
+  fetchPrice(symbol)
+    .then(r => applyRate(fieldId, r, after))
+    .catch(err => {
+      if(!$(fieldId).value) $(fieldId).supportingText = t("failed") + err.message + t("autoFailedHint");
+    });
+});
