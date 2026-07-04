@@ -1,0 +1,85 @@
+:root{
+  --md-ref-typeface-plain:"Vazirmatn";
+  --md-ref-typeface-brand:"Vazirmatn";
+  /* Material 3 baseline — روشن */
+  --md-sys-color-primary:#6750A4;
+  --md-sys-color-on-primary:#FFFFFF;
+  --md-sys-color-primary-container:#EADDFF;
+  --md-sys-color-on-primary-container:#21005D;
+  --md-sys-color-surface:#FEF7FF;
+  --md-sys-color-on-surface:#1D1B20;
+  --md-sys-color-surface-container:#F3EDF7;
+  --md-sys-color-on-surface-variant:#49454F;
+  --md-sys-color-outline:#79747E;
+  --md-sys-color-error-container:#F9DEDC;
+  --md-sys-color-on-error-container:#410E0B;
+  --ok-bg:#C9EBCB; --ok-fg:#0B5217;
+  --md-outlined-text-field-container-shape:16px;
+  --md-filled-button-container-shape:20px;
+  --md-filled-button-container-height:52px;
+}
+[data-theme="dark"]{
+  /* Material 3 baseline — تاریک */
+  --md-sys-color-primary:#D0BCFF;
+  --md-sys-color-on-primary:#381E72;
+  --md-sys-color-primary-container:#4F378B;
+  --md-sys-color-on-primary-container:#EADDFF;
+  --md-sys-color-surface:#141218;
+  --md-sys-color-on-surface:#E6E0E9;
+  --md-sys-color-surface-container:#211F26;
+  --md-sys-color-on-surface-variant:#CAC4D0;
+  --md-sys-color-outline:#938F99;
+  --md-sys-color-error-container:#8C1D18;
+  --md-sys-color-on-error-container:#F9DEDC;
+  --ok-bg:#123F1E; --ok-fg:#A6E5AF;
+}
+
+md-icon{ font-family:"Material Symbols Rounded"; }
+
+body{
+  margin:0; padding:2rem 1rem; min-height:100vh; box-sizing:border-box;
+  font-family:Vazirmatn,Tahoma,sans-serif;
+  background:var(--md-sys-color-surface);
+  color:var(--md-sys-color-on-surface);
+  display:flex; justify-content:center; align-items:flex-start;
+  transition:background .3s,color .3s;
+}
+.card{
+  background:var(--md-sys-color-surface-container);
+  width:100%; max-width:440px; border-radius:28px; padding:2rem;
+  transition:background .3s;
+}
+header{ display:flex; align-items:center; gap:.4rem; }
+header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; }
+.logo{ color:var(--md-sys-color-primary); }
+.subtitle{ margin:.2rem 0 1rem; font-size:.85rem; color:var(--md-sys-color-on-surface-variant); }
+
+/* سوییچ مظنه / گرم */
+.segmented{
+  display:flex; border:1px solid var(--md-sys-color-outline);
+  border-radius:999px; overflow:hidden; margin-bottom:.5rem;
+}
+.seg{
+  flex:1; padding:.6rem; border:0; cursor:pointer; font:inherit; font-size:.9rem;
+  background:transparent; color:var(--md-sys-color-on-surface);
+}
+.seg.active{
+  background:var(--md-sys-color-primary-container);
+  color:var(--md-sys-color-on-primary-container); font-weight:700;
+}
+
+md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
+md-filled-button{ width:100%; margin-top:1.5rem; }
+
+#out{ margin-top:1.5rem; display:none; }
+.row{ display:flex; justify-content:space-between; padding:.4rem 0;
+      color:var(--md-sys-color-on-surface-variant); }
+.hobab{
+  margin-top:.75rem; padding:1rem 1.25rem; border-radius:20px;
+  display:flex; align-items:center; gap:.6rem;
+  font-size:1.25rem; font-weight:800;
+  animation:pop .45s cubic-bezier(.2,1.6,.4,1);
+}
+.pos{ background:var(--md-sys-color-error-container); color:var(--md-sys-color-on-error-container); }
+.neg{ background:var(--ok-bg); color:var(--ok-fg); }
+@keyframes pop{ from{ transform:scale(.85); opacity:0 } to{ transform:scale(1); opacity:1 } }
