@@ -1,6 +1,7 @@
 :root{
   --md-ref-typeface-plain:"Vazirmatn";
   --md-ref-typeface-brand:"Vazirmatn";
+  color-scheme: light; /* کنترل‌های بومی مرورگر هماهنگ با تم */
   /* Material 3 baseline — روشن */
   --md-sys-color-primary:#0B57D0;
   --md-sys-color-on-primary:#FFFFFF;
@@ -19,6 +20,7 @@
   --md-outlined-text-field-container-shape:16px;
 }
 [data-theme="dark"]{
+  color-scheme: dark;
   /* Material 3 baseline — تاریک */
   --md-sys-color-primary:#A8C7FA;
   --md-sys-color-on-primary:#062E6F;
@@ -56,7 +58,14 @@ body{
   transition:background .3s;
 }
 header{ display:flex; align-items:center; gap:.4rem; }
-header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; }
+header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; display:flex; align-items:center; gap:.5rem; }
+/* نشان نسخه — به سبک label/chip متریال */
+.badge{
+  font-size:.62rem; font-weight:700; letter-spacing:.02em;
+  padding:.18rem .55rem; border-radius:999px;
+  background:var(--md-sys-color-primary-container);
+  color:var(--md-sys-color-on-primary-container);
+}
 .logo{ color:var(--md-sys-color-primary); }
 .subtitle{ margin:.2rem 0 1rem; font-size:.85rem; color:var(--md-sys-color-on-surface-variant); }
 md-tabs{ margin-bottom:.75rem; --md-primary-tab-container-color:transparent; }
@@ -72,30 +81,6 @@ md-tabs{ margin-bottom:.75rem; --md-primary-tab-container-color:transparent; }
 .market.open #marketIcon{ color:var(--ok-fg); }
 .market.closed #marketIcon{ color:var(--md-sys-color-on-surface-variant); }
 
-/* نمودار روند انس */
-#trend{ margin-top:1.25rem; }
-.trend-head{
-  display:flex; justify-content:space-between; align-items:center;
-  font-size:.8rem; color:var(--md-sys-color-on-surface-variant); margin-bottom:.35rem;
-}
-#spark{ width:100%; height:60px; display:block; }
-#spark polyline{ fill:none; stroke:var(--md-sys-color-primary); stroke-width:2; }
-#spark .area{ fill:var(--md-sys-color-primary-container); opacity:.45; stroke:none; }
-
-/* سوییچ مظنه / گرم */
-.segmented{
-  display:flex; border:1px solid var(--md-sys-color-outline);
-  border-radius:999px; overflow:hidden; margin-bottom:.5rem;
-}
-.seg{
-  flex:1; padding:.6rem; border:0; cursor:pointer; font:inherit; font-size:.9rem;
-  background:transparent; color:var(--md-sys-color-on-surface);
-}
-.seg + .seg{ border-inline-start:1px solid var(--md-sys-color-outline); }
-.seg.active{
-  background:var(--md-sys-color-secondary-container);
-  color:var(--md-sys-color-on-secondary-container); font-weight:700;
-}
 
 md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
 #share{ margin-top:.25rem; }
@@ -103,12 +88,3 @@ md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
 #out{ margin-top:1.5rem; display:none; }
 .row{ display:flex; justify-content:space-between; padding:.4rem 0;
       color:var(--md-sys-color-on-surface-variant); }
-.result{
-  margin-top:.75rem; padding:1rem 1.25rem; border-radius:20px;
-  display:flex; align-items:center; gap:.6rem;
-  font-size:1.15rem; font-weight:700;
-  background:var(--md-sys-color-primary-container);
-  color:var(--md-sys-color-on-primary-container);
-  animation:pop .45s cubic-bezier(.2,1.6,.4,1);
-}
-@keyframes pop{ from{ transform:scale(.85); opacity:0 } to{ transform:scale(1); opacity:1 } }
