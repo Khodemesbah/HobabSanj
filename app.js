@@ -4,6 +4,12 @@ const digits = s => String(s)
   .replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
   .replace(/\D/g, "");
 
+// برای انس: اعشار را حفظ می‌کند (۴۱۸۱.۳ نباید ۴۱۸۱۳ خوانده شود)
+const decimals = s => parseFloat(String(s)
+  .replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+  .replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+  .replace(/[^\d.]/g, ""));
+
 // مظنه و گرم: تا ۵ رقم ×۱۰۰۰ — دلار: تا ۳ رقم ×۱۰۰۰ — فرم کامل بدون تغییر
 function normalize(raw, kind){
   const d = digits(raw);
@@ -27,12 +33,12 @@ function bubble({ market, ons, usd, mode }){
   return { zati, hobab, pct: hobab / zati * 100 };
 }
 
-/* ── دریافت انس جهانی از gold-api.com — رایگان، بدون کلید، بدون سقف درخواست، با CORS ── */
-async function fetchOns(){
-  const res = await fetch("https://api.gold-api.com/price/XAU");
+/* ── دریافت قیمت از gold-api.com — رایگان، بدون کلید، بدون سقف، با CORS ── */
+async function fetchPrice(symbol){ // "XAU" طلا ، "XAG" نقره
+  const res = await fetch("https://api.gold-api.com/price/" + symbol,
+    { signal: AbortSignal.timeout(10000) }); // حداکثر ۱۰ ثانیه انتظار، بعد خطا
   if(!res.ok) throw new Error("خطای " + res.status);
-  const data = await res.json();
-  return data.price; // دلار به ازای هر انس
+  return (await res.json()).price; // دلار به ازای هر انس
 }
 
 /* ── DOM ── */
@@ -77,7 +83,7 @@ document.querySelectorAll(".seg").forEach(btn => {
 /* ── محاسبه ── */
 function calc(){
   const market = normalize($("gold").value, mode);
-  const ons = Number(digits($("ons").value));   // انس: بدون انعطاف
+  const ons = decimals($("ons").value);   // انس: بدون انعطاف، با حفظ اعشار
   const usd = normalize($("usd").value, "usd");
   if(!market || !ons || !usd) return;
 
@@ -94,18 +100,32 @@ function calc(){
 }
 $("calcBtn").addEventListener("click", calc);
 
-/* ── دکمهٔ دریافت انس ── */
-$("sync").addEventListener("click", async () => {
-  const icon = $("sync").querySelector("md-icon");
-  icon.textContent = "hourglass_top";
-  try{
-    const p = await fetchOns();
-    $("ons").value = Math.round(p);
-    $("ons").supportingText = "دریافت شد: " + fa(p) + " دلار";
-    icon.textContent = "sync";
-    calc(); // اگر دو فیلد دیگر پر باشند، حباب هم همان لحظه به‌روز می‌شود
-  }catch(err){
-    icon.textContent = "sync_problem";
-    $("ons").supportingText = "دریافت انس ناموفق: " + err.message;
-  }
-});
+/* ── دکمه‌های دریافت قیمت داخل فیلدها ── */
+function wireFetch(btnId, fieldId, symbol, after){
+  $(btnId).addEventListener("click", async () => {
+    const icon = $(btnId).querySelector("md-icon");
+    icon.textContent = "hourglass_top";
+    try{
+      const p = await fetchPrice(symbol);
+      $(fieldId).value = p;
+      $(fieldId).supportingText = "دریافت شد: " + p + " دلار";
+      icon.textContent = "sync";
+      after();
+    }catch(err){
+      icon.textContent = "sync_problem";
+      $(fieldId).supportingText = "دریافت ناموفق: " + err.message;
+    }
+  });
+}
+wireFetch("fetchXau", "ons", "XAU", calc);
+wireFetch("fetchXag", "xag", "XAG", silver);
+
+/* ── ارزش ذاتی شمش نقره ۹۹۹ (یک کیلوگرمی) ── */
+function silver(){
+  const x = decimals($("xag").value);
+  if(!x){ $("silverOut").style.display = "none"; return; }
+  const v = x * (1000 / 31.1035) * 0.999; // ۱۰۰۰ گرم ÷ گرم‌به‌انس × خلوص ۹۹۹
+  $("silverOut").style.display = "flex";
+  $("silverVal").textContent = v.toLocaleString("fa-IR", { maximumFractionDigits: 2 }) + " دلار";
+}
+$("xag").addEventListener("input", silver);
