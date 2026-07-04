@@ -5,8 +5,8 @@
   "display": "standalone",
   "dir": "rtl",
   "lang": "fa",
-  "background_color": "#F9F9FF",
-  "theme_color": "#0B57D0",
+  "background_color": "#F8F9FB",
+  "theme_color": "#526772",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
