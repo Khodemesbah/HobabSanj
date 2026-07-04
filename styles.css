@@ -60,7 +60,27 @@ header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; }
 .logo{ color:var(--md-sys-color-primary); }
 .subtitle{ margin:.2rem 0 1rem; font-size:.85rem; color:var(--md-sys-color-on-surface-variant); }
 md-tabs{ margin-bottom:.75rem; --md-primary-tab-container-color:transparent; }
-#coinOut{ margin-top:.5rem; }
+
+/* کارت وضعیت بازار */
+.market{
+  display:flex; align-items:center; gap:.75rem;
+  padding:.85rem 1.1rem; border-radius:16px; margin-bottom:.75rem;
+  background:var(--md-sys-color-surface);
+}
+.market b{ display:block; font-size:.95rem; }
+.market span{ font-size:.78rem; color:var(--md-sys-color-on-surface-variant); }
+.market.open #marketIcon{ color:var(--ok-fg); }
+.market.closed #marketIcon{ color:var(--md-sys-color-on-surface-variant); }
+
+/* نمودار روند انس */
+#trend{ margin-top:1.25rem; }
+.trend-head{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.8rem; color:var(--md-sys-color-on-surface-variant); margin-bottom:.35rem;
+}
+#spark{ width:100%; height:60px; display:block; }
+#spark polyline{ fill:none; stroke:var(--md-sys-color-primary); stroke-width:2; }
+#spark .area{ fill:var(--md-sys-color-primary-container); opacity:.45; stroke:none; }
 
 /* سوییچ مظنه / گرم */
 .segmented{
@@ -83,12 +103,12 @@ md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
 #out{ margin-top:1.5rem; display:none; }
 .row{ display:flex; justify-content:space-between; padding:.4rem 0;
       color:var(--md-sys-color-on-surface-variant); }
-.hobab{
+.result{
   margin-top:.75rem; padding:1rem 1.25rem; border-radius:20px;
   display:flex; align-items:center; gap:.6rem;
-  font-size:1.25rem; font-weight:800;
+  font-size:1.15rem; font-weight:700;
+  background:var(--md-sys-color-primary-container);
+  color:var(--md-sys-color-on-primary-container);
   animation:pop .45s cubic-bezier(.2,1.6,.4,1);
 }
-.pos{ background:var(--md-sys-color-error-container); color:var(--md-sys-color-on-error-container); }
-.neg{ background:var(--ok-bg); color:var(--ok-fg); }
 @keyframes pop{ from{ transform:scale(.85); opacity:0 } to{ transform:scale(1); opacity:1 } }
