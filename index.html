@@ -4,33 +4,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>حباب‌سنج | ارزش ذاتی طلا و نقره</title>
+  <title>حباب | ارزش ذاتی طلا و نقره</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
   <!-- آیکون‌ها از jsDelivr — دامنهٔ fonts.googleapis.com از ایران بدون فیلترشکن باز نمی‌شود -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/rounded.css">
   <!-- با هر آپدیت، عدد v را یک واحد بالا ببر تا مرورگر کاربر نسخهٔ جدید را بدون پاک کردن کش بگیرد -->
-  <link rel="stylesheet" href="styles.css?v=0.8.1">
+  <link rel="stylesheet" href="styles.css?v=0.8.3">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#0B57D0">
 
   <!-- ایمپورت مستقیم باندل‌شده؛ بدون importmap تا در وب‌ویوهای قدیمی هم کار کند -->
   <script type="module" src="https://esm.run/@material/web/all.js"></script>
-  <script type="module" src="app.js?v=0.8.1"></script>
+  <script type="module" src="app.js?v=0.8.3"></script>
 </head>
 <body>
   <main class="card">
     <header>
       <md-icon class="logo">bubble_chart</md-icon>
-      <h1>حباب‌سنج</h1>
+      <h1>حباب</h1>
       <md-icon-button id="themeBtn" title="پوستهٔ روشن/تاریک"><md-icon id="themeIcon">dark_mode</md-icon></md-icon-button>
     </header>
     <p class="subtitle">اعلام ارزش ذاتی طلا و نقره</p>
 
     <md-tabs id="nav">
-      <md-primary-tab inline-icon><md-icon slot="icon">workspace_premium</md-icon>طلا</md-primary-tab>
-      <md-primary-tab inline-icon><md-icon slot="icon">diamond</md-icon>نقره</md-primary-tab>
+      <!-- آیکون‌های اختصاصی تک‌رنگ: انگشتر برای طلا، شمش برای نقره — رنگ را از تم می‌گیرند -->
+      <md-primary-tab inline-icon>
+        <md-icon slot="icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 22a7 7 0 1 1 0-14 7 7 0 0 1 0 14Zm0-2.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"/><path d="M12 1.6 15 4.6l-3 3-3-3 3-3Z"/></svg></md-icon>
+        طلا
+      </md-primary-tab>
+      <md-primary-tab inline-icon>
+        <md-icon slot="icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8.8 4.5h6.4l2.4 4.6H6.4l2.4-4.6Z"/><path d="M4.3 13h6.4l2.4 4.6H1.9L4.3 13Z"/><path d="M13.3 13h6.4l2.4 4.6H10.9l2.4-4.6Z"/></svg></md-icon>
+        نقره
+      </md-primary-tab>
     </md-tabs>
 
     <section id="view-gold">
