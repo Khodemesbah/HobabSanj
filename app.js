@@ -191,9 +191,11 @@ function coinCalc(){
                  (hobab / zati * 100).toLocaleString("fa-IR", { maximumFractionDigits: 1 }) + "٪)";
 }
 
-/* ── منوی سه‌گانهٔ طلا / نقره / سکه ── */
-$("nav").addEventListener("change", () => {
-  ["view-gold", "view-silver", "view-coin"].forEach((id, k) => {
-    $(id).hidden = $("nav").activeTabIndex !== k;
+/* ── منوی سه‌گانهٔ طلا / نقره / سکه — با کلیک مستقیم، مستقل از رویداد داخلی کامپوننت ── */
+document.querySelectorAll("#nav md-primary-tab").forEach((tab, k) => {
+  tab.addEventListener("click", () => {
+    ["view-gold", "view-silver", "view-coin"].forEach((id, i) => {
+      $(id).hidden = i !== k;
+    });
   });
 });
