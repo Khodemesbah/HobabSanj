@@ -10,14 +10,14 @@
   <!-- آیکون‌ها از jsDelivr — دامنهٔ fonts.googleapis.com از ایران بدون فیلترشکن باز نمی‌شود -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/rounded.css">
   <!-- با هر آپدیت، عدد v را یک واحد بالا ببر تا مرورگر کاربر نسخهٔ جدید را بدون پاک کردن کش بگیرد -->
-  <link rel="stylesheet" href="styles.css?v=0.9">
+  <link rel="stylesheet" href="styles.css?v=0.9.1">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#0B57D0">
 
   <!-- ایمپورت مستقیم باندل‌شده؛ بدون importmap تا در وب‌ویوهای قدیمی هم کار کند -->
   <script type="module" src="https://esm.run/@material/web/all.js"></script>
-  <script type="module" src="app.js?v=0.9"></script>
+  <script type="module" src="app.js?v=0.9.1"></script>
 </head>
 <body>
   <main class="card">
@@ -61,10 +61,14 @@
       <md-icon slot="leading-icon">attach_money</md-icon>
     </md-outlined-text-field>
 
+    <!-- کارت نتیجه — مهم‌ترین عدد صفحه -->
     <section id="out">
-      <div class="row"><span id="rowMesghalLabel">ارزش ذاتی مثقال</span><b id="zatiMesghal"></b></div>
-      <div class="row"><span id="rowGeramLabel">ارزش ذاتی گرم ۱۸ عیار</span><b id="zatiGeram"></b></div>
-      <md-text-button id="share"><md-icon slot="icon">share</md-icon><span id="shareLabel">اشتراک نتیجه</span></md-text-button>
+      <div class="result-card">
+        <div class="result-head"><md-icon>paid</md-icon><span id="rowMesghalLabel">ارزش ذاتی مثقال</span></div>
+        <div class="result-main" id="zatiMesghal"></div>
+        <div class="result-sub"><span id="rowGeramLabel">ارزش ذاتی گرم ۱۸ عیار</span><b id="zatiGeram"></b></div>
+        <md-text-button id="share"><md-icon slot="icon">share</md-icon><span id="shareLabel">اشتراک نتیجه</span></md-text-button>
+      </div>
     </section>
 
     </section>
@@ -76,7 +80,12 @@
       <md-icon-button id="fetchXag" slot="trailing-icon" title="دریافت از API"><md-icon>sync</md-icon></md-icon-button>
     </md-outlined-text-field>
 
-    <div id="silverOut" class="row" style="display:none"><span id="silverRowLabel">ارزش ذاتی شمش یک‌کیلویی ۹۹۹</span><b id="silverVal"></b></div>
+    <section id="silverOut" style="display:none">
+      <div class="result-card">
+        <div class="result-head"><md-icon>diamond</md-icon><span id="silverRowLabel">ارزش ذاتی شمش یک‌کیلویی ۹۹۹</span></div>
+        <div class="result-main" id="silverVal"></div>
+      </div>
+    </section>
 
     </section>
 
