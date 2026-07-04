@@ -10,23 +10,24 @@
   <!-- آیکون‌ها از jsDelivr — دامنهٔ fonts.googleapis.com از ایران بدون فیلترشکن باز نمی‌شود -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/rounded.css">
   <!-- با هر آپدیت، عدد v را یک واحد بالا ببر تا مرورگر کاربر نسخهٔ جدید را بدون پاک کردن کش بگیرد -->
-  <link rel="stylesheet" href="styles.css?v=0.8.5">
+  <link rel="stylesheet" href="styles.css?v=0.9">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#0B57D0">
 
   <!-- ایمپورت مستقیم باندل‌شده؛ بدون importmap تا در وب‌ویوهای قدیمی هم کار کند -->
   <script type="module" src="https://esm.run/@material/web/all.js"></script>
-  <script type="module" src="app.js?v=0.8.5"></script>
+  <script type="module" src="app.js?v=0.9"></script>
 </head>
 <body>
   <main class="card">
     <header>
       <md-icon class="logo">bubble_chart</md-icon>
-      <h1>حباب</h1>
+      <h1><span id="appName">حباب</span> <span id="verBadge" class="badge">v0.9 Beta</span></h1>
+      <md-icon-button id="langBtn" title="English / فارسی"><md-icon>language</md-icon></md-icon-button>
       <md-icon-button id="themeBtn" title="پوستهٔ روشن/تاریک"><md-icon id="themeIcon">dark_mode</md-icon></md-icon-button>
     </header>
-    <p class="subtitle">اعلام ارزش ذاتی طلا و نقره</p>
+    <p class="subtitle" id="subtitle">اعلام ارزش ذاتی طلا و نقره</p>
 
     <!-- کارت وضعیت بازار جهانی -->
     <div id="marketCard" class="market">
@@ -41,11 +42,11 @@
       <!-- آیکون‌های اختصاصی تک‌رنگ: انگشتر برای طلا، شمش برای نقره — رنگ را از تم می‌گیرند -->
       <md-primary-tab inline-icon>
         <md-icon slot="icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 22a7 7 0 1 1 0-14 7 7 0 0 1 0 14Zm0-2.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"/><path d="M12 1.6 15 4.6l-3 3-3-3 3-3Z"/></svg></md-icon>
-        طلا
+        <span id="tabGoldLabel">طلا</span>
       </md-primary-tab>
       <md-primary-tab inline-icon>
         <md-icon slot="icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8.8 4.5h6.4l2.4 4.6H6.4l2.4-4.6Z"/><path d="M4.3 13h6.4l2.4 4.6H1.9L4.3 13Z"/><path d="M13.3 13h6.4l2.4 4.6H10.9l2.4-4.6Z"/></svg></md-icon>
-        نقره
+        <span id="tabSilverLabel">نقره</span>
       </md-primary-tab>
     </md-tabs>
 
@@ -61,15 +62,9 @@
     </md-outlined-text-field>
 
     <section id="out">
-      <div class="row"><span>ارزش ذاتی مثقال</span><b id="zatiMesghal"></b></div>
-      <div class="row"><span>ارزش ذاتی گرم ۱۸ عیار</span><b id="zatiGeram"></b></div>
-      <md-text-button id="share"><md-icon slot="icon">share</md-icon>اشتراک نتیجه</md-text-button>
-    </section>
-
-    <!-- روند انس طلا — از نمونه‌های ثبت‌شده در همین دستگاه -->
-    <section id="trend" style="display:none">
-      <div class="trend-head"><span id="trendLabel">روند انس طلا (نمونه‌های این دستگاه)</span><b id="trendDelta"></b></div>
-      <svg id="spark" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
+      <div class="row"><span id="rowMesghalLabel">ارزش ذاتی مثقال</span><b id="zatiMesghal"></b></div>
+      <div class="row"><span id="rowGeramLabel">ارزش ذاتی گرم ۱۸ عیار</span><b id="zatiGeram"></b></div>
+      <md-text-button id="share"><md-icon slot="icon">share</md-icon><span id="shareLabel">اشتراک نتیجه</span></md-text-button>
     </section>
 
     </section>
@@ -81,7 +76,7 @@
       <md-icon-button id="fetchXag" slot="trailing-icon" title="دریافت از API"><md-icon>sync</md-icon></md-icon-button>
     </md-outlined-text-field>
 
-    <div id="silverOut" class="row" style="display:none"><span>ارزش ذاتی شمش یک‌کیلویی ۹۹۹</span><b id="silverVal"></b></div>
+    <div id="silverOut" class="row" style="display:none"><span id="silverRowLabel">ارزش ذاتی شمش یک‌کیلویی ۹۹۹</span><b id="silverVal"></b></div>
 
     </section>
 
