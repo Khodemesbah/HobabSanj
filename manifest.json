@@ -1,0 +1,13 @@
+{
+  "name": "حباب‌سنج — ارزش ذاتی طلا و نقره",
+  "short_name": "حباب‌سنج",
+  "start_url": ".",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "fa",
+  "background_color": "#F9F9FF",
+  "theme_color": "#0B57D0",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
