@@ -132,7 +132,11 @@ md-tabs{ margin-bottom:1.5rem; --md-primary-tab-container-color:transparent; } /
 .market-head svg{ width:1.25rem; height:1.25rem; display:block; }
 .market b{ font-size:.95rem; }
 .market span{ font-size:.78rem; color:var(--md-sys-color-on-surface-variant); }
-.market.open #marketIcon{ color:var(--md-sys-color-primary); }
+/* دات زنده: تنفس نرم و آهسته — الگوی live متریال، نه چشمک تند */
+.market.open #marketIcon{ color:var(--md-sys-color-primary); animation:breathe 2.4s ease-in-out infinite; }
+@keyframes breathe{ 0%,100%{ opacity:1 } 50%{ opacity:.35 } }
+/* احترام به تنظیم کاهش حرکت سیستم */
+@media (prefers-reduced-motion: reduce){ .market.open #marketIcon{ animation:none; } }
 .market.closed #marketIcon{ color:var(--md-sys-color-on-surface-variant); }
 
 
