@@ -80,14 +80,14 @@ body{
 .card{
   position:relative; /* مرجع جای‌گیری نشان نسخه */
   background:var(--md-sys-color-surface-container);
-  width:100%; max-width:440px; border-radius:28px; padding:2rem;
+  width:100%; max-width:440px; border-radius:28px; padding:3rem 2rem 2rem; /* نوار بالا برای نشان نسخه — بدون تداخل با هدر */
   transition:background .3s;
 }
 header{ display:flex; align-items:center; gap:.4rem; }
 header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; display:flex; align-items:center; gap:.5rem; }
 /* نشان نسخه — به سبک label/chip متریال */
 .badge{
-  position:absolute; top:1.1rem; inset-inline-end:1.1rem; /* گوشهٔ بالا-چپ در حالت فارسی؛ هدر نفس می‌کشد */
+  position:absolute; top:1rem; inset-inline-end:1.25rem; /* در نوار اختصاصی بالای کارت، جدا از آیکون‌های هدر */
   font-size:.62rem; font-weight:700; letter-spacing:.02em;
   padding:.18rem .55rem; border-radius:999px;
   background:var(--md-sys-color-primary-container);
@@ -147,3 +147,23 @@ md-outlined-text-field{
 @keyframes bump{ from{ transform:scale(1.08); } }
 .spin{ animation:spin .9s linear infinite; } /* چرخش آیکون در حین دریافت */
 @keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* اسکلتون لودینگ — مستطیل‌های گرد با شیمر ملایم، از توکن‌های تم */
+#marketSkl{ display:flex; flex-direction:column; gap:.45rem; }
+.skl-card{
+  background:var(--md-sys-color-surface); border-radius:20px;
+  padding:1rem 1.1rem; margin-top:1rem;
+  display:flex; flex-direction:column; gap:.65rem;
+}
+.skl-line{
+  height:.8rem; border-radius:999px;
+  background:linear-gradient(90deg,
+    var(--md-sys-color-surface-container) 25%,
+    color-mix(in srgb, var(--md-sys-color-on-surface) 10%, var(--md-sys-color-surface-container)) 50%,
+    var(--md-sys-color-surface-container) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.2s linear infinite;
+}
+.skl-line.tall{ height:1.35rem; }
+.w40{ width:40%; } .w55{ width:55%; } .w65{ width:65%; } .w75{ width:75%; }
+@keyframes shimmer{ from{ background-position:200% 0 } to{ background-position:-200% 0 } }
