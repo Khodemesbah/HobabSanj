@@ -1,7 +1,9 @@
 /* نسخه از پارامتر ?v= آدرس ثبت می‌آید (sw.js?v=…) — تنها جای تعریفش app.js است */
 const APP_VERSION = new URL(self.location.href).searchParams.get("v") || "dev";
 const CACHE = "hobab-v" + APP_VERSION;
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg",
+const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json",
+  "./icons/icon.svg", "./icons/icon-192.png", "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png",
   "./fonts/AbarMid-Regular.woff2", "./fonts/AbarMid-SemiBold.woff2",
   "./fonts/AbarMid-Bold.woff2", "./fonts/AbarMid-ExtraBold.woff2"];
 
