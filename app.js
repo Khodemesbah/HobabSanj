@@ -20,7 +20,7 @@ function normalize(raw, kind){
 }
 
 /* ── زبان و نسخه ── */
-const APP_VERSION = "0.9.3"; // نسخه‌های زیر ۱ برچسب Beta می‌گیرند
+const APP_VERSION = "0.9.4"; // نسخه‌های زیر ۱ برچسب Beta می‌گیرند
 let lang = localStorage.getItem("hobab-lang") || "fa";
 const T = {
   fa: {
@@ -30,8 +30,6 @@ const T = {
     xagLabel: "انس جهانی نقره (دلار)",
     rowMesghal: "ارزش ذاتی مثقال", rowGeram: "ارزش ذاتی گرم ۱۸ عیار",
     silverRow: "ارزش ذاتی شمش یک‌کیلویی ۹۹۹",
-    share: "اشتراک نتیجه",
-    shareText: (m, g) => "ارزش ذاتی طلا — مثقال: " + m + " تومان، گرم ۱۸ عیار: " + g + " تومان",
     toman: " تومان", dollar: " دلار", read: "خوانده شد: ",
     waiting: "در انتظار دریافت داده…",
     marketOpen: "بازارهای جهانی بازند", marketClosed: "بازارهای جهانی بسته‌اند",
@@ -51,8 +49,6 @@ const T = {
     xagLabel: "Silver ounce (USD)",
     rowMesghal: "Intrinsic value per mesghal", rowGeram: "Intrinsic value per 18k gram",
     silverRow: "Intrinsic value of 1 kg .999 bar",
-    share: "Share result",
-    shareText: (m, g) => "Gold intrinsic value — mesghal: " + m + " Toman, 18k gram: " + g + " Toman",
     toman: " Toman", dollar: " USD", read: "Parsed: ",
     waiting: "Waiting for data…",
     marketOpen: "Global markets are open", marketClosed: "Global markets are closed",
@@ -143,7 +139,6 @@ $("ons").addEventListener("input", e => { e.target.error = false; calc(); });
 });
 
 /* ── محاسبهٔ زندهٔ ارزش ذاتی — مثقال و گرم هم‌زمان ── */
-let last = null; // آخرین نتیجه برای اشتراک
 function calc(){
   const ons = decimals($("ons").value);   // انس: بدون انعطاف، با حفظ اعشار
   const usd = normalize($("usd").value, "usd");
@@ -151,18 +146,10 @@ function calc(){
 
   const mesghal = ons * usd / MESGHAL_DIVISOR;
   const geram = mesghal / GRAM_PER_MESGHAL;
-  last = { mesghal, geram };
   $("out").style.display = "block";
   $("zatiMesghal").textContent = fa10k(mesghal) + t("toman");
   $("zatiGeram").textContent = fa10k(geram) + t("toman");
 }
-/* ── اشتراک نتیجه ── */
-$("share").addEventListener("click", () => {
-  if(!last) return;
-  const text = T[lang].shareText(fa10k(last.mesghal), fa10k(last.geram));
-  if(navigator.share) navigator.share({ text: text, url: location.href }).catch(() => {});
-  else navigator.clipboard.writeText(text + " — " + location.href);
-});
 
 /* ── قرار دادن نرخ در فیلد + ذخیره برای دفعهٔ بعد و حالت آفلاین ── */
 const store = JSON.parse(localStorage.getItem("hobabsanj-rates") || "{}");
@@ -244,7 +231,6 @@ function applyLang(){
   $("rowMesghalLabel").textContent = t("rowMesghal");
   $("rowGeramLabel").textContent = t("rowGeram");
   $("silverRowLabel").textContent = t("silverRow");
-  $("shareLabel").textContent = t("share");
   if(!marketState.XAU && !marketState.XAG) $("marketLabel").textContent = t("waiting");
   updateMarketCard();
   if(store.usd && $("usd").value) $("usd").supportingText = infoText(store.usd);
