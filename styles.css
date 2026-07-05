@@ -67,6 +67,9 @@ md-icon{
   overflow:hidden;
 }
 
+/* ریشهٔ باگ اسکلتون: display:flex روی عنصر، ویژگی hidden را بی‌اثر می‌کرد؛ این قاعده همیشه برنده است */
+[hidden]{ display:none !important; }
+
 body{
   margin:0; padding:1.25rem 1rem; box-sizing:border-box;
   min-height:100svh; /* ارتفاع واقعی ویوپورت موبایل با احتساب نوار آدرس */
