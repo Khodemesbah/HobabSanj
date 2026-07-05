@@ -12,5 +12,12 @@
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "images/image-light.png", "sizes": "1024x2091", "type": "image/png", "form_factor": "narrow", "label": "تم روشن — محاسبهٔ ارزش ذاتی طلا" },
+    { "src": "images/image-dark.png", "sizes": "1024x2187", "type": "image/png", "form_factor": "narrow", "label": "تم تاریک" }
+  ],
+  "shortcuts": [
+    { "name": "نقره", "short_name": "نقره", "url": "./?tab=silver", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }
