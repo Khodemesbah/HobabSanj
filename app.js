@@ -20,7 +20,7 @@ function normalize(raw, kind){
 }
 
 /* ── زبان و نسخه ── */
-const APP_VERSION = "0.9.11.1"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
+const APP_VERSION = "1.0.0-pre"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
 let lang = localStorage.getItem("hobab-lang") || "fa";
 const T = {
   fa: {
@@ -35,6 +35,7 @@ const T = {
     marketOpen: "بازار جهانی باز است", marketClosed: "بازار جهانی بسته است",
     lastUpdate: "آخرین به‌روزرسانی — ", goldWord: "طلا", silverWord: "نقره",
     agoNow: "همین حالا", agoMin: " دقیقه پیش", agoHour: " ساعت پیش", offline: "آفلاین",
+    titleFetch: "دریافت از API", titleTheme: "پوستهٔ روشن/تاریک", titleRetry: "تلاش مجدد",
     fetching: "در حال دریافت خودکار…",
     failed: "دریافت ناموفق: ", autoFailedHint: " — دکمهٔ کنار فیلد را بزن",
     source: "منبع: gold-api", atHour: " — ساعت ", closedTag: " — بازار جهانی بسته است",
@@ -54,6 +55,7 @@ const T = {
     marketOpen: "Global market is open", marketClosed: "Global market is closed",
     lastUpdate: "Last update — ", goldWord: "Gold", silverWord: "Silver",
     agoNow: "just now", agoMin: " min ago", agoHour: " h ago", offline: "Offline",
+    titleFetch: "Fetch from API", titleTheme: "Light/dark theme", titleRetry: "Retry",
     fetching: "Fetching automatically…",
     failed: "Fetch failed: ", autoFailedHint: " — use the sync button",
     source: "Source: gold-api", atHour: " — at ", closedTag: " — global market closed",
@@ -110,12 +112,15 @@ const $ = id => document.getElementById(id);
 const root = document.documentElement;
 
 /* ── پوسته ── */
-const saved = localStorage.getItem("hobyab-theme");
+// مهاجرت از کلید قدیمی غلط‌تایپی «hobyab» — تم ذخیره‌شدهٔ کاربران فعلی حفظ می‌شود
+const oldTheme = localStorage.getItem("hobyab-theme");
+if(oldTheme){ localStorage.setItem("hobab-theme", oldTheme); localStorage.removeItem("hobyab-theme"); }
+const saved = localStorage.getItem("hobab-theme");
 root.dataset.theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 syncThemeIcon();
 $("themeBtn").addEventListener("click", () => {
   root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
-  localStorage.setItem("hobyab-theme", root.dataset.theme);
+  localStorage.setItem("hobab-theme", root.dataset.theme);
   syncThemeIcon();
 });
 function syncThemeIcon(){
@@ -170,7 +175,7 @@ function applyRate(fieldId, r, after){
   $(fieldId).value = fieldNum(r.price);
   $(fieldId).error = false;
   $(fieldId).supportingText = " "; // زمان و منبع در کارت وضعیت بازار نمایش داده می‌شود
-  store[fieldId] = r;
+  store[fieldId] = { price: r.price }; // فقط قیمت لازم است — زمان و وضعیت در marketState زنده‌اند
   try{ localStorage.setItem("hobabsanj-rates", JSON.stringify(store)); }catch(e){}
   after();
 }
@@ -184,7 +189,7 @@ function setBtnIcon(btnId, name){
   icon.classList.remove("spin"); // تیک و خطا همیشه ثابت‌اند — هیچ‌وقت نمی‌چرخند
   icon.style.animation = "none"; // تضمین دوم: استایل درون‌خطی بر هر کلاس و قاعدهٔ CSS برنده است
   icon.textContent = name;
-  if(name === "check") // تیک متریال ۴۵ ثانیه می‌ماند، بعد دوباره آیکون رفرش
+  if(name === "check" || name === "sync_problem") // تیک و خطا ۴۵ ثانیه می‌مانند، بعد دوباره آیکون رفرش
     iconTimers[btnId] = setTimeout(() => { icon.textContent = "sync"; }, 45000);
 }
 async function refreshBoth(btnId){ // کلیک روی تیک هم دوباره به‌روزرسانی می‌کند
@@ -241,7 +246,9 @@ function updateMarketCard(){
   $("marketSkl").hidden = true; // پایان اسکلتون
   ($("marketHead") || $("marketLabel")).hidden = false; // سازگاری با HTML قدیمیِ هنوز کش‌شده در CDN
   $("marketRetry").style.display = "none"; // داده رسید؛ حالت خطا پاک
-  const closed = (xau && xau.closed) || (xag && xag.closed);
+  // وضعیت همین لحظه محاسبه می‌شود، نه لحظهٔ دریافت — با باز ماندن اپ، در آپدیت دقیقه‌ای زنده می‌ماند
+  const staleNow = s => s && (s.at ? Date.now() - new Date(s.at).getTime() > 45 * 60 * 1000 : s.closed);
+  const closed = marketClosedNow() || staleNow(xau) || staleNow(xag);
   $("marketCard").className = "market " + (closed ? "closed" : "open");
   $("marketIcon").innerHTML = closed ? MOON_SVG : DOT_SVG; // ماه متریال ۳ / دات یاسی primary
   $("marketLabel").textContent = closed ? t("marketClosed") : t("marketOpen");
@@ -283,10 +290,14 @@ function applyLang(){
   document.documentElement.dir = t("dir");
   document.title = t("name") + " | " + t("subtitle");
   $("appName").textContent = t("name");
+  const verNum = APP_VERSION.replace("-pre", ""), pre = APP_VERSION.includes("-pre");
   $("verBadge").textContent = lang === "fa"
-    ? fieldNum(APP_VERSION) + (parseFloat(APP_VERSION) < 1 ? " بتا" : "")
-    : "v" + APP_VERSION + (parseFloat(APP_VERSION) < 1 ? " Beta" : "");
+    ? fieldNum(verNum) + (pre ? " پیش‌انتشار" : parseFloat(verNum) < 1 ? " بتا" : "")
+    : "v" + verNum + (pre ? " Pre" : parseFloat(verNum) < 1 ? " Beta" : "");
   $("offBadge").textContent = t("offline");
+  $("fetchXau").title = $("fetchXag").title = t("titleFetch");
+  $("themeBtn").title = t("titleTheme");
+  $("marketRetry").title = t("titleRetry");
   $("subtitle").textContent = t("subtitle");
   $("tabGoldLabel").textContent = t("tabGold");
   $("tabSilverLabel").textContent = t("tabSilver");
@@ -318,7 +329,6 @@ $("langBtn").addEventListener("click", () => {
   }
 });
 applyLang();
-try{ localStorage.removeItem("hobab-trend"); }catch(e){} // پاک‌سازی دادهٔ نمودار حذف‌شده
 
 /* دریافت خودکار انس طلا و نقره — با حالت خطا و تلاش مجدد روی کارت بازار */
 function marketError(){
