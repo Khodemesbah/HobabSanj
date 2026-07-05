@@ -3,17 +3,17 @@
   --md-ref-typeface-brand:"Vazirmatn";
   color-scheme: light; /* کنترل‌های بومی مرورگر هماهنگ با تم */
   /* Material 3 baseline — روشن */
-  --md-sys-color-primary:#526772;   /* Blue Grey متریال، تن M3 */
+  --md-sys-color-primary:#7A5900;   /* پالت طلایی — تن‌های M3 از سید کهربایی، زنده و هم‌معنا با محصول */
   --md-sys-color-on-primary:#FFFFFF;
-  --md-sys-color-primary-container:#D5E4EF;
-  --md-sys-color-on-primary-container:#0E1D26;
-  --md-sys-color-secondary-container:#DCE3E9;
-  --md-sys-color-on-secondary-container:#171C21;
-  --md-sys-color-surface:#F8F9FB;
-  --md-sys-color-on-surface:#191C1E;
-  --md-sys-color-surface-container:#ECEEF0;
-  --md-sys-color-on-surface-variant:#40484D;
-  --md-sys-color-outline:#70787E;
+  --md-sys-color-primary-container:#FFDF9E;
+  --md-sys-color-on-primary-container:#261A00;
+  --md-sys-color-secondary-container:#F5E2BB;
+  --md-sys-color-on-secondary-container:#241A04;
+  --md-sys-color-surface:#FFF8F1;
+  --md-sys-color-on-surface:#1F1B13;
+  --md-sys-color-surface-container:#F3ECDE;
+  --md-sys-color-on-surface-variant:#4D4639;
+  --md-sys-color-outline:#7F7667;
   --md-sys-color-error-container:#F9DEDC;
   --md-sys-color-on-error-container:#410E0B;
   --ok-bg:#C9EBCB; --ok-fg:#0B5217;
@@ -22,17 +22,17 @@
 [data-theme="dark"]{
   color-scheme: dark;
   /* Material 3 baseline — تاریک */
-  --md-sys-color-primary:#B9C8D2;   /* Blue Grey روشن برای تم تاریک */
-  --md-sys-color-on-primary:#24323B;
-  --md-sys-color-primary-container:#D5E4EF; /* پرش تونال: کانتینر روشن روی زمینهٔ تیره، مثل کوییک‌ستینگز اندروید */
-  --md-sys-color-on-primary-container:#1B2A33;
-  --md-sys-color-secondary-container:#3C444B;
-  --md-sys-color-on-secondary-container:#D8E0E7;
-  --md-sys-color-surface:#111416;
-  --md-sys-color-on-surface:#E1E3E5;
-  --md-sys-color-surface-container:#1C2023;
-  --md-sys-color-on-surface-variant:#C0C8CD;
-  --md-sys-color-outline:#8A9297;
+  --md-sys-color-primary:#EAC248;   /* طلایی روشن برای تم تاریک */
+  --md-sys-color-on-primary:#3F2E00;
+  --md-sys-color-primary-container:#FFDF9E; /* پرش تونال: کانتینر روشن روی زمینهٔ تیره */
+  --md-sys-color-on-primary-container:#261A00;
+  --md-sys-color-secondary-container:#4E4426;
+  --md-sys-color-on-secondary-container:#F5E2BB;
+  --md-sys-color-surface:#17130B;
+  --md-sys-color-on-surface:#EAE2D4;
+  --md-sys-color-surface-container:#242015;
+  --md-sys-color-on-surface-variant:#CFC6B4;
+  --md-sys-color-outline:#999080;
   --md-sys-color-error-container:#8C1D18;
   --md-sys-color-on-error-container:#F9DEDC;
   --ok-bg:#123F1E; --ok-fg:#A6E5AF;
@@ -45,11 +45,13 @@ md-icon{
 }
 
 body{
-  margin:0; padding:2rem 1rem; min-height:100vh; box-sizing:border-box;
+  margin:0; padding:1.25rem 1rem; box-sizing:border-box;
+  min-height:100svh; /* ارتفاع واقعی ویوپورت موبایل با احتساب نوار آدرس */
   font-family:Vazirmatn,Tahoma,sans-serif;
   background:var(--md-sys-color-surface);
   color:var(--md-sys-color-on-surface);
-  display:flex; justify-content:center; align-items:flex-start;
+  display:flex; justify-content:center;
+  align-items:center; /* تراز عمودی کارت: فاصلهٔ برابر از بالا و پایین صفحه */
   transition:background .3s,color .3s;
 }
 .card{
@@ -68,7 +70,7 @@ header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; display:flex; al
 }
 .logo{ color:var(--md-sys-color-primary); }
 .subtitle{ margin:.2rem 0 1rem; font-size:.85rem; color:var(--md-sys-color-on-surface-variant); }
-md-tabs{ margin-bottom:.75rem; --md-primary-tab-container-color:transparent; }
+md-tabs{ margin-bottom:1.5rem; --md-primary-tab-container-color:transparent; } /* فاصلهٔ کافی تا فیلدهای زیر */
 
 /* کارت وضعیت بازار */
 .market{
