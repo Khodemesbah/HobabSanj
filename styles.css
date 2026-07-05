@@ -78,6 +78,7 @@ body{
   transition:background .3s,color .3s;
 }
 .card{
+  position:relative; /* مرجع جای‌گیری نشان نسخه */
   background:var(--md-sys-color-surface-container);
   width:100%; max-width:440px; border-radius:28px; padding:2rem;
   transition:background .3s;
@@ -86,6 +87,7 @@ header{ display:flex; align-items:center; gap:.4rem; }
 header h1{ font-size:1.5rem; font-weight:800; margin:0; flex:1; display:flex; align-items:center; gap:.5rem; }
 /* نشان نسخه — به سبک label/chip متریال */
 .badge{
+  position:absolute; top:1.1rem; inset-inline-end:1.1rem; /* گوشهٔ بالا-چپ در حالت فارسی؛ هدر نفس می‌کشد */
   font-size:.62rem; font-weight:700; letter-spacing:.02em;
   padding:.18rem .55rem; border-radius:999px;
   background:var(--md-sys-color-primary-container);
@@ -108,7 +110,12 @@ md-tabs{ margin-bottom:1.5rem; --md-primary-tab-container-color:transparent; } /
 .market.closed #marketIcon{ color:var(--md-sys-color-on-surface-variant); }
 
 
-md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
+md-outlined-text-field{
+  display:block; margin-top:1rem; width:100%;
+  /* تراز عمودی متن با آیکون‌های داخل باکس: جبران متریک بلند فونت ابر */
+  --md-outlined-field-top-space:1.1rem;
+  --md-outlined-field-bottom-space:.7rem;
+}
 
 #out{ margin-top:1rem; display:none; }
 .row{ display:flex; justify-content:space-between; padding:.4rem 0;
@@ -132,3 +139,11 @@ md-outlined-text-field{ display:block; margin-top:1rem; width:100%; }
 }
 #silverOut{ margin-top:1rem; }
 @keyframes pop{ from{ transform:scale(.9); opacity:0 } to{ transform:scale(1); opacity:1 } }
+
+/* بازخوردهای تعاملی */
+.result-card{ transition:transform .15s ease; }
+.result-card:active{ transform:scale(.985); } /* حس لمس */
+.bump{ animation:bump .35s cubic-bezier(.2,1.4,.4,1); } /* پرش عدد هنگام به‌روزرسانی */
+@keyframes bump{ from{ transform:scale(1.08); } }
+.spin{ animation:spin .9s linear infinite; } /* چرخش آیکون در حین دریافت */
+@keyframes spin{ to{ transform:rotate(360deg); } }
