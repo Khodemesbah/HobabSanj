@@ -20,7 +20,7 @@ function normalize(raw, kind){
 }
 
 /* ── زبان و نسخه ── */
-const APP_VERSION = "0.9.9.5"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
+const APP_VERSION = "0.9.9.6"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
 let lang = localStorage.getItem("hobab-lang") || "fa";
 const T = {
   fa: {
