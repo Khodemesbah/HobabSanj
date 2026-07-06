@@ -21,7 +21,7 @@ function normalize(raw, kind){
 }
 
 /* ── زبان و نسخه ── */
-const APP_VERSION = "1.0.0"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
+const APP_VERSION = "1.0.1"; // تنها جای تعریف نسخه — sw.js آن را از ?v= آدرس ثبت خودش می‌خواند
 let lang = localStorage.getItem("hobab-lang") || "fa";
 const T = {
   fa: {
@@ -82,11 +82,18 @@ const MOON_SVG = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentC
 // دات توپُر برای وضعیت «باز» — الگوی live status متریال؛ رنگ از primary تم می‌آید، نه سبز خارج از سیستم
 const DOT_SVG = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>';
 
-// بازار جهانی طلا از جمعه ≈۲۲ UTC تا یکشنبه ≈۲۲ UTC بسته است
+// ساعت بازار جهانی به وقت نیویورک است: جمعه ۱۷ می‌بندد، یکشنبه ۱۸ باز می‌شود،
+// و دوشنبه تا پنجشنبه وقفهٔ روزانهٔ ۱۷ تا ۱۸ دارد — DST آمریکا با تایم‌زون خودکار لحاظ می‌شود
 function marketClosedNow(){
-  const now = new Date();
-  const d = now.getUTCDay(), h = now.getUTCHours(); // 0=یکشنبه … 6=شنبه
-  return d === 6 || (d === 5 && h >= 22) || (d === 0 && h < 22);
+  const p = new Intl.DateTimeFormat("en-US",
+    { timeZone: "America/New_York", weekday: "short", hour: "numeric", hourCycle: "h23" })
+    .formatToParts(new Date());
+  const wd = p.find(x => x.type === "weekday").value;
+  const h = +p.find(x => x.type === "hour").value;
+  if(wd === "Sat") return true;
+  if(wd === "Fri") return h >= 17;
+  if(wd === "Sun") return h < 18;
+  return h === 17; // وقفهٔ روزانهٔ تسویه (۵ تا ۶ عصر نیویورک)
 }
 async function fetchPrice(symbol){ // "XAU" طلا ، "XAG" نقره
   const res = await fetch("https://api.gold-api.com/price/" + symbol,
